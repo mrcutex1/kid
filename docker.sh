@@ -14,10 +14,10 @@ echo \
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin git vim curl  -y
 
-docker build -t wyz .
-docker container rm wyz --force &
+docker build -t jmz .
+docker container rm jmz --force &
 sleep 3
-docker run -d --restart=unless-stopped --name wyz wyz
+docker run -d --restart=unless-stopped --name jmz jmz
 
 sleep 2
 echo "Error 6783976546789098765"

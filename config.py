@@ -80,12 +80,12 @@ confirmer = {}
 
 
 START_IMG_URL = getenv(
-    "START_IMG_URL", "https://envs.sh/gAT.jpg"
+    "START_IMG_URL", "https://envs.sh/gUc.jpg"
 )
 PING_IMG_URL = getenv(
-    "PING_IMG_URL", "https://envs.sh/gAT.jpg"
+    "PING_IMG_URL", "https://envs.sh/gUc.jpg"
 )
-PLAYLIST_IMG_URL = "https://envs.sh/gAT.jpg"
+PLAYLIST_IMG_URL = "https://envs.sh/gUc.jpg"
 STATS_IMG_URL = "https://envs.sh/gAT.jpg"
 TELEGRAM_AUDIO_URL = "https://envs.sh/gAT.jpg"
 TELEGRAM_VIDEO_URL = "https://envs.sh/gAT.jpg"

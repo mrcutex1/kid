@@ -69,7 +69,7 @@ async def get_thumb(videoid):
                     await f.close()
 
         
-        colors = ["greenyellow"]
+        colors = ["pink"]
         border = colors[0]
         youtube = Image.open(f"cache/thumb{videoid}.png")
         image1 = changeImageSize(1280, 720, youtube)
@@ -83,7 +83,7 @@ async def get_thumb(videoid):
         arial = ImageFont.truetype("AnonXMusic/assets/font2.ttf", 30)
         font = ImageFont.truetype("AnonXMusic/assets/font.ttf", 30)
         font4=ImageFont.truetype("AnonXMusic/assets/font4.ttf",30)
-        draw.text((550, 8), unidecode(app.name), fill="greenyellow", font=font4, width=50,)
+        draw.text((550, 8), unidecode(app.name), fill="pink", font=font4, width=50,)
         
         draw.text(
             (55, 560),
@@ -94,13 +94,13 @@ async def get_thumb(videoid):
         draw.text(
             (57, 600),
             clear(title),
-            fill="greenyellow",
+            fill="pink",
                #(255, 255, 255),
             font=font,
         )
         draw.line(
             [(55, 660), (1220, 660)],
-            fill="greenyellow",
+            fill="pink",
             width=8,
             joint="curve",
         )
@@ -119,7 +119,7 @@ async def get_thumb(videoid):
         draw.text(
             (430, 670),
             f"↻        ◁      II       ▷        ↺",
-            fill="greenyellow",
+            fill="pink",
             font=font4,
         )
         try:

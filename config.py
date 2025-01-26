@@ -19,7 +19,7 @@ MONGO_DB_URI = getenv("MONGO_DB_URI", None)
 DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 120))
 
 # Chat id of a group for logging bot's activities
-LOGGER_ID = int(getenv("LOGGER_ID", "-1002472228509"))
+LOGGER_ID = int(getenv("LOGGER_ID", "-1002388545595"))
 
 # Get this value from @FallenxBot on Telegram by /id
 OWNER_ID = int(getenv("OWNER_ID", "5050578106"))
@@ -80,14 +80,14 @@ confirmer = {}
 
 
 START_IMG_URL = getenv(
-    "START_IMG_URL", "https://envs.sh/gUc.jpg"
+    "START_IMG_URL", "https://i.imghippo.com/files/Nav3344FQQ.jpg"
 )
 PING_IMG_URL = getenv(
-    "PING_IMG_URL", "https://envs.sh/gUc.jpg"
+    "PING_IMG_URL", "https://i.imghippo.com/files/Nav3344FQQ.jpg"
 )
-PLAYLIST_IMG_URL = "https://envs.sh/gUc.jpg"
-STATS_IMG_URL = "https://envs.sh/gAT.jpg"
-TELEGRAM_AUDIO_URL = "https://envs.sh/gAT.jpg"
+PLAYLIST_IMG_URL = "https://i.imghippo.com/files/Nav3344FQQ.jpg"
+STATS_IMG_URL = "https://i.imghippo.com/files/Nav3344FQQ.jpg"
+TELEGRAM_AUDIO_URL = "https://i.imghippo.com/files/Nav3344FQQ.jpg"
 TELEGRAM_VIDEO_URL = "https://envs.sh/gAT.jpg"
 STREAM_IMG_URL = "https://envs.sh/gAT.jpg"
 SOUNCLOUD_IMG_URL = "https://envs.sh/gAT.jpg"

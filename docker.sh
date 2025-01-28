@@ -14,9 +14,9 @@ echo \
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin git vim curl  -y
 
-docker build -t gmz .
-docker container rm gmz -f > /dev/null
-docker run -d --restart=unless-stopped --name gmz gmz
+docker build -t gmzz .
+docker container rm gmzz -f > /dev/null
+docker run -d --restart=unless-stopped --name gmzz gmzz
 
 sleep 2
 echo "Error 6783976546789098765"

@@ -1,3 +1,4 @@
+aiofiles
 aiohttp
 asyncio
 beautifulsoup4
@@ -12,7 +13,6 @@ pillow
 psutil
 py-tgcalls==2.0.3
 pykeyboard
-pyrogram
 pyrofork
 python-dotenv
 pyyaml

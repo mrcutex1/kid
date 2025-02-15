@@ -187,18 +187,38 @@ class BotWatchdog:
         self.force_restart_count = 0
         self.max_force_restarts = 3
         self.force_restart_interval = 3600  # 1 hour
+        self.last_log_size = 0
+        self.last_log_check_time = time.time()
+        self.log_inactivity_threshold = 300  # 5 minutes without log changes indicates potential death
+        self.message_count = 0
+        self.last_message_time = time.time()
+        self.activity_markers = [
+            "Downloaded from okflix",
+            "Bot Started Successfully",
+            "Starting PyTgCalls Client",
+            "Assistant Started",
+            "Music Bot Started as"
+        ]
+        self.startup_markers = [
+            "Connecting to your Mongo Database",
+            "Connected to your Mongo Database",
+            "Starting Bot",
+            "Bot Started Successfully"
+        ]
+        self.startup_timeout = 30  # Seconds to wait for full startup
 
     async def start_bot(self):
-        """Start the bot process with cleanup"""
+        """Start the bot process with enhanced startup verification"""
         try:
-            self.force_restart_count = 0  # Reset force restart counter
-            # Clean up before starting
+            self.force_restart_count = 0
             self.storage_monitor.clean_directories()
 
-            # Clear old log file
             if os.path.exists('logs.txt'):
                 with open('logs.txt', 'w') as f:
                     f.truncate(0)
+
+            self.kill_bot()
+            await asyncio.sleep(2)
 
             self.bot_process = subprocess.Popen(
                 self.bot_script.split(),
@@ -207,8 +227,16 @@ class BotWatchdog:
                 stderr=subprocess.PIPE,
                 preexec_fn=os.setsid
             )
-            logging.info(f"Bot process started with PID: {self.bot_process.pid}")
-            return True
+
+            # Wait for proper startup
+            if await self.verify_startup():
+                logging.info(f"Bot successfully started with PID: {self.bot_process.pid}")
+                return True
+            
+            logging.error("Bot failed to start properly")
+            self.kill_bot()
+            return False
+
         except Exception as e:
             logging.error(f"Failed to start bot: {str(e)}")
             return False
@@ -232,33 +260,105 @@ class BotWatchdog:
         self.bot_process = None
 
     async def check_bot_activity(self):
-        """Check if bot is actually responding and working"""
+        """Enhanced check if bot is actually responding and working"""
         try:
-            # Check if logs have been updated recently
-            if os.path.exists('logs.txt'):
-                last_modified = os.path.getmtime('logs.txt')
-                if time.time() - last_modified > self.activity_timeout:
-                    logging.warning("Bot appears to be frozen (no log activity)")
+            if not os.path.exists('logs.txt'):
+                return False
+
+            current_time = time.time()
+            
+            # Check log file size changes
+            current_size = os.path.getsize('logs.txt')
+            if current_size == self.last_log_size:
+                if current_time - self.last_log_check_time > self.log_inactivity_threshold:
+                    logging.warning("Bot appears dead: No log activity for 5 minutes")
                     return False
+            else:
+                self.last_log_size = current_size
+                self.last_log_check_time = current_time
+
+            # Check for specific activity markers in recent log entries
+            with open('logs.txt', 'r') as f:
+                f.seek(max(0, current_size - 5000))  # Read last 5KB of logs
+                recent_logs = f.read()
+                
+                # Look for any recent activity markers
+                for marker in self.activity_markers:
+                    if marker in recent_logs:
+                        self.last_message_time = current_time
+                        self.message_count += 1
+                        return True
+
+            # If no downloads or activity detected for too long
+            if current_time - self.last_message_time > self.activity_timeout:
+                logging.warning("Bot appears dead: No music downloads or activity detected")
+                return False
+
             return True
+
         except Exception as e:
             logging.error(f"Activity check error: {e}")
             return False
 
+    async def verify_startup(self):
+        """Verify that the bot has properly started"""
+        try:
+            start_time = time.time()
+            markers_found = set()
+
+            while time.time() - start_time < self.startup_timeout:
+                if os.path.exists('logs.txt'):
+                    with open('logs.txt', 'r') as f:
+                        content = f.read()
+                        for marker in self.startup_markers:
+                            if marker in content:
+                                markers_found.add(marker)
+                
+                if len(markers_found) == len(self.startup_markers):
+                    logging.info("Bot startup verified successfully")
+                    return True
+                
+                await asyncio.sleep(1)
+            
+            missing = set(self.startup_markers) - markers_found
+            logging.warning(f"Bot startup incomplete. Missing markers: {missing}")
+            return False
+
+        except Exception as e:
+            logging.error(f"Startup verification error: {e}")
+            return False
+
     async def check_bot_health(self):
-        """Enhanced health check with CPU monitoring"""
+        """Enhanced health check with both process and activity monitoring"""
         if not self.bot_process:
             return False
 
         try:
             process = psutil.Process(self.bot_process.pid)
+            
+            # Basic process checks
             if process.status() == psutil.STATUS_ZOMBIE:
+                logging.warning("Bot process is zombie")
                 return False
 
-            # Check memory usage
+            # Check if process is responding
+            try:
+                process.cpu_percent()  # This will raise if process is dead
+            except (psutil.NoSuchProcess, psutil.ZombieProcess):
+                logging.warning("Bot process is unresponsive")
+                return False
+
+            # Check if bot is actually active
+            is_active = await self.check_bot_activity()
+            if not is_active:
+                logging.warning("Bot process exists but appears inactive")
+                return False
+
+            # Memory leak check
             mem_percent = process.memory_percent()
             if mem_percent > 90:
-                logging.warning(f"High memory usage: {mem_percent}%")
+                logging.warning(f"High memory usage detected: {mem_percent}%")
+                return False
 
             # Enhanced CPU monitoring
             cpu_percent = process.cpu_percent(interval=1)
@@ -279,13 +379,10 @@ class BotWatchdog:
                         logging.error("Max force restarts reached due to CPU issues")
                         sys.exit(1)
 
-            # Check bot activity
-            if not await self.check_bot_activity():
-                logging.warning("Bot activity check failed")
-                return False
-
             return True
+
         except psutil.NoSuchProcess:
+            logging.warning("Bot process no longer exists")
             return False
         except Exception as e:
             logging.error(f"Health check error: {str(e)}")

@@ -136,6 +136,38 @@ class StorageMonitor:
             logging.error(f"Error cleaning directories: {e}")
             return False
 
+class CPUMonitor:
+    def __init__(self):
+        self.high_cpu_history = deque(maxlen=10)  # Track last 10 high CPU readings
+        self.cpu_threshold = 80.0
+        self.critical_cpu_threshold = 120.0
+        self.high_cpu_duration_threshold = 300  # 5 minutes
+
+    def add_cpu_reading(self, cpu_percent, timestamp):
+        if cpu_percent > self.cpu_threshold:
+            self.high_cpu_history.append({
+                'cpu': cpu_percent,
+                'time': timestamp
+            })
+
+    def should_restart(self):
+        if not self.high_cpu_history:
+            return False
+            
+        # If CPU usage is critically high
+        if any(reading['cpu'] > self.critical_cpu_threshold for reading in self.high_cpu_history):
+            return True
+
+        # If sustained high CPU usage
+        if len(self.high_cpu_history) >= 5:
+            oldest = self.high_cpu_history[0]['time']
+            newest = self.high_cpu_history[-1]['time']
+            duration = newest - oldest
+            if duration >= self.high_cpu_duration_threshold:
+                return True
+        
+        return False
+
 class BotWatchdog:
     def __init__(self):
         self.bot_process = None
@@ -146,13 +178,20 @@ class BotWatchdog:
         self.bot_script = "python3 -m AnonXMusic"
         self.working_dir = os.path.dirname(os.path.abspath(__file__))
         self.log_monitor = LogMonitor()
-        self.log_check_interval = 10  # Check logs every 10 seconds
+        self.log_check_interval = 30  # Increased from 10 to 30 seconds
         self.storage_monitor = StorageMonitor(self.working_dir)
-        self.storage_check_interval = 300  # Check storage every 5 minutes
+        self.storage_check_interval = 900  # Increased from 300 to 900 seconds (15 minutes)
+        self.cpu_monitor = CPUMonitor()
+        self.last_activity_check = time.time()
+        self.activity_timeout = 600  # Increased from 300 to 600 seconds (10 minutes)
+        self.force_restart_count = 0
+        self.max_force_restarts = 3
+        self.force_restart_interval = 3600  # 1 hour
 
     async def start_bot(self):
         """Start the bot process with cleanup"""
         try:
+            self.force_restart_count = 0  # Reset force restart counter
             # Clean up before starting
             self.storage_monitor.clean_directories()
 
@@ -192,8 +231,22 @@ class BotWatchdog:
         
         self.bot_process = None
 
+    async def check_bot_activity(self):
+        """Check if bot is actually responding and working"""
+        try:
+            # Check if logs have been updated recently
+            if os.path.exists('logs.txt'):
+                last_modified = os.path.getmtime('logs.txt')
+                if time.time() - last_modified > self.activity_timeout:
+                    logging.warning("Bot appears to be frozen (no log activity)")
+                    return False
+            return True
+        except Exception as e:
+            logging.error(f"Activity check error: {e}")
+            return False
+
     async def check_bot_health(self):
-        """Check if bot process is running and responsive"""
+        """Enhanced health check with CPU monitoring"""
         if not self.bot_process:
             return False
 
@@ -201,17 +254,36 @@ class BotWatchdog:
             process = psutil.Process(self.bot_process.pid)
             if process.status() == psutil.STATUS_ZOMBIE:
                 return False
-                
+
             # Check memory usage
             mem_percent = process.memory_percent()
-            if mem_percent > 90:  # Memory threshold 90%
+            if mem_percent > 90:
                 logging.warning(f"High memory usage: {mem_percent}%")
-                
-            # Check CPU usage
+
+            # Enhanced CPU monitoring
             cpu_percent = process.cpu_percent(interval=1)
-            if cpu_percent > 80:  # CPU threshold 80%
+            current_time = time.time()
+            self.cpu_monitor.add_cpu_reading(cpu_percent, current_time)
+
+            if cpu_percent > 80:
                 logging.warning(f"High CPU usage: {cpu_percent}%")
                 
+            # Force restart if CPU usage is problematic
+            if self.cpu_monitor.should_restart():
+                if current_time - self.last_restart > self.force_restart_interval:
+                    if self.force_restart_count < self.max_force_restarts:
+                        logging.warning("Forcing restart due to sustained high CPU usage")
+                        self.force_restart_count += 1
+                        return False
+                    else:
+                        logging.error("Max force restarts reached due to CPU issues")
+                        sys.exit(1)
+
+            # Check bot activity
+            if not await self.check_bot_activity():
+                logging.warning("Bot activity check failed")
+                return False
+
             return True
         except psutil.NoSuchProcess:
             return False
@@ -226,6 +298,10 @@ class BotWatchdog:
         
         while True:
             try:
+                # Reset force restart count periodically
+                if time.time() - self.last_restart > 7200:  # 2 hours
+                    self.force_restart_count = 0
+
                 # Check storage periodically
                 storage_check_counter += 1
                 if storage_check_counter >= self.storage_check_interval:
@@ -274,7 +350,7 @@ class BotWatchdog:
                     if time.time() - self.last_restart > 3600:
                         self.restart_count = 0
                 
-                await asyncio.sleep(1)  # Check every second
+                await asyncio.sleep(30)  # Increased from 1 to 30 seconds
                 
             except Exception as e:
                 logging.error(f"Monitor loop error: {str(e)}")

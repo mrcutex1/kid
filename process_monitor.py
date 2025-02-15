@@ -34,16 +34,43 @@ class ProcessTracker:
             'io_write': 0
         })
         tracemalloc.start()
+        self.last_found_pid = None  # Add this to track the last known PID
 
     async def get_bot_process(self):
-        """Find the AnonXMusic process"""
-        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
-            try:
-                if 'AnonXMusic' in ' '.join(proc.info['cmdline'] or []):
-                    return psutil.Process(proc.info['pid'])
-            except (psutil.NoSuchProcess, psutil.AccessDenied):
-                continue
-        return None
+        """Find the AnonXMusic process with improved detection"""
+        try:
+            # First try last known PID
+            if self.last_found_pid:
+                try:
+                    process = psutil.Process(self.last_found_pid)
+                    if process.is_running():
+                        return process
+                except psutil.NoSuchProcess:
+                    self.last_found_pid = None
+
+            # Search for process by multiple methods
+            for proc in psutil.process_iter(['pid', 'name', 'cmdline', 'cwd']):
+                try:
+                    # Check multiple conditions
+                    cmdline = ' '.join(proc.info['cmdline'] or [])
+                    cwd = proc.info['cwd'] if 'cwd' in proc.info else ''
+                    
+                    if any([
+                        'AnonXMusic' in cmdline,
+                        'python3 -m AnonXMusic' in cmdline,
+                    ]):
+                        self.last_found_pid = proc.info['pid']
+                        logging.info(f"Found bot process: PID {self.last_found_pid}")
+                        return psutil.Process(self.last_found_pid)
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    continue
+
+            logging.error("Bot process not found - make sure bot is running")
+            return None
+            
+        except Exception as e:
+            logging.error(f"Error finding bot process: {e}")
+            return None
 
     def analyze_memory_snapshot(self):
         """Analyze memory usage by file"""
@@ -104,15 +131,16 @@ class ProcessTracker:
                 frame = frame.f_back
 
     async def monitor_loop(self):
-        """Main monitoring loop"""
+        """Main monitoring loop with improved logging"""
+        logging.info("Process monitor starting - waiting for bot process...")
         while True:
             try:
                 process = await self.get_bot_process()
                 if not process:
-                    logging.error("Bot process not found")
                     await asyncio.sleep(5)
                     continue
 
+                logging.info(f"Monitoring bot process (PID: {process.pid})")
                 # Monitor CPU per thread
                 threads = process.threads()
                 for thread in threads:
@@ -140,7 +168,7 @@ class ProcessTracker:
                                       stats.get('cpu_time', 0), 
                                       stats['memory'])
 
-                await asyncio.sleep(300)  # Check every 5 minutes
+                await asyncio.sleep(60)  # Changed from 300 to 60 seconds (check every minute)
 
             except Exception as e:
                 logging.error(f"Monitoring error: {e}")

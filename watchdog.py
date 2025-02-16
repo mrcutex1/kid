@@ -22,7 +22,7 @@ logging.basicConfig(
 )
 
 class LogMonitor:
-    def __init__(self, log_file='logs.txt'):
+    def __init__(self, log_file='log.txt'):
         self.log_file = log_file
         self.last_position = 0
         self.error_history = deque(maxlen=100)  # Keep last 100 errors
@@ -213,8 +213,8 @@ class BotWatchdog:
             self.force_restart_count = 0
             self.storage_monitor.clean_directories()
 
-            if os.path.exists('logs.txt'):
-                with open('logs.txt', 'w') as f:
+            if os.path.exists('log.txt'):
+                with open('log.txt', 'w') as f:
                     f.truncate(0)
 
             self.kill_bot()
@@ -262,13 +262,13 @@ class BotWatchdog:
     async def check_bot_activity(self):
         """Enhanced check if bot is actually responding and working"""
         try:
-            if not os.path.exists('logs.txt'):
+            if not os.path.exists('log.txt'):
                 return False
 
             current_time = time.time()
             
             # Check log file size changes
-            current_size = os.path.getsize('logs.txt')
+            current_size = os.path.getsize('log.txt')
             if current_size == self.last_log_size:
                 if current_time - self.last_log_check_time > self.log_inactivity_threshold:
                     logging.warning("Bot appears dead: No log activity for 5 minutes")
@@ -278,7 +278,7 @@ class BotWatchdog:
                 self.last_log_check_time = current_time
 
             # Check for specific activity markers in recent log entries
-            with open('logs.txt', 'r') as f:
+            with open('log.txt', 'r') as f:
                 f.seek(max(0, current_size - 5000))  # Read last 5KB of logs
                 recent_logs = f.read()
                 
@@ -307,8 +307,8 @@ class BotWatchdog:
             markers_found = set()
 
             while time.time() - start_time < self.startup_timeout:
-                if os.path.exists('logs.txt'):
-                    with open('logs.txt', 'r') as f:
+                if os.path.exists('log.txt'):
+                    with open('log.txt', 'r') as f:
                         content = f.read()
                         for marker in self.startup_markers:
                             if marker in content:

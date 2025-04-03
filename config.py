@@ -86,7 +86,7 @@ START_IMG_URL = getenv(
     "START_IMG_URL", "https://imgur.com/a/T3hV9i3"
 )
 PING_IMG_URL = getenv(
-    "PING_IMG_URL", "https://i.imghippo.com/files/Nav3344FQQ.jpg"
+    "PING_IMG_URL", "https://imgur.com/a/T3hV9i3"
 )
 PLAYLIST_IMG_URL = "https://imgur.com/a/T3hV9i3"
 STATS_IMG_URL = "https://imgur.com/a/T3hV9i3"

@@ -25,7 +25,7 @@ YTPROXY_URL = getenv("YTPROXY_URL", 'https://yt.okflix.top/api') ## E.G https://
 LOGGER_ID = int(getenv("LOGGER_ID", "-1002133369721"))
 
 # Get this value from @FallenxBot on Telegram by /id
-OWNER_ID = int(getenv("OWNER_ID", "5050578106"))
+OWNER_ID = int(getenv("OWNER_ID", "5111294407"))
 
 ## Fill these variables if you're deploying on heroku.
 # Your heroku app name
@@ -35,7 +35,7 @@ HEROKU_API_KEY = getenv("HEROKU_API_KEY")
 
 UPSTREAM_REPO = getenv(
     "UPSTREAM_REPO",
-    "https://github.com/mrcutex1/google",
+    "https://github.com/mrcutex1/Wynko",
 )
 UPSTREAM_BRANCH = getenv("UPSTREAM_BRANCH", "master")
 GIT_TOKEN = getenv(
@@ -46,7 +46,7 @@ SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/Ace_networkop")
 SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/+JoSPjg4d91QzMWNl")
 
 # Set this to True if you want the assistant to automatically leave chats after an interval
-AUTO_LEAVING_ASSISTANT = bool(getenv("AUTO_LEAVING_ASSISTANT", True))
+AUTO_LEAVING_ASSISTANT = bool(getenv("AUTO_LEAVING_ASSISTANT", False))
 
 PRIVATE_BOT_MODE = getenv("PRIVATE_BOT_MODE", None)
 PRIVATE_BOT_MODE_MEM = int(getenv("PRIVATE_BOT_MODE_MEM", 0))
@@ -83,21 +83,21 @@ confirmer = {}
 
 
 START_IMG_URL = getenv(
-    "START_IMG_URL", "https://i.imghippo.com/files/Nav3344FQQ.jpg"
+    "START_IMG_URL", "https://imgur.com/a/T3hV9i3"
 )
 PING_IMG_URL = getenv(
     "PING_IMG_URL", "https://i.imghippo.com/files/Nav3344FQQ.jpg"
 )
-PLAYLIST_IMG_URL = "https://i.imghippo.com/files/Nav3344FQQ.jpg"
-STATS_IMG_URL = "https://i.imghippo.com/files/Nav3344FQQ.jpg"
-TELEGRAM_AUDIO_URL = "https://i.imghippo.com/files/Nav3344FQQ.jpg"
-TELEGRAM_VIDEO_URL = "https://envs.sh/gAT.jpg"
-STREAM_IMG_URL = "https://envs.sh/gAT.jpg"
-SOUNCLOUD_IMG_URL = "https://envs.sh/gAT.jpg"
-YOUTUBE_IMG_URL = "https://envs.sh/gAT.jpg"
-SPOTIFY_ARTIST_IMG_URL = "https://envs.sh/gAT.jpg"
-SPOTIFY_ALBUM_IMG_URL = "https://envs.sh/ovA.jpeg"
-SPOTIFY_PLAYLIST_IMG_URL = "https://envs.sh/gAT.jpg"
+PLAYLIST_IMG_URL = "https://imgur.com/a/T3hV9i3"
+STATS_IMG_URL = "https://imgur.com/a/T3hV9i3"
+TELEGRAM_AUDIO_URL = "https://imgur.com/a/T3hV9i3"
+TELEGRAM_VIDEO_URL = "https://imgur.com/a/T3hV9i3"
+STREAM_IMG_URL = "https://imgur.com/a/T3hV9i3"
+SOUNCLOUD_IMG_URL = "https://imgur.com/a/T3hV9i3"
+YOUTUBE_IMG_URL = "https://imgur.com/a/T3hV9i3"
+SPOTIFY_ARTIST_IMG_URL = "https://imgur.com/a/T3hV9i3"
+SPOTIFY_ALBUM_IMG_URL = "https://imgur.com/a/T3hV9i3"
+SPOTIFY_PLAYLIST_IMG_URL = "https://imgur.com/a/T3hV9i3"
 
 
 def time_to_seconds(time):

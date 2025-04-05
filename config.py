@@ -83,21 +83,21 @@ confirmer = {}
 
 
 START_IMG_URL = getenv(
-    "START_IMG_URL", "https://imgur.com/a/T3hV9i3"
+    "START_IMG_URL", "https://imgur.com/a/fugNj8T"
 )
 PING_IMG_URL = getenv(
-    "PING_IMG_URL", "https://imgur.com/a/T3hV9i3"
+    "PING_IMG_URL", "https://imgur.com/a/fugNj8T"
 )
-PLAYLIST_IMG_URL = "https://imgur.com/a/T3hV9i3"
-STATS_IMG_URL = "https://imgur.com/a/T3hV9i3"
-TELEGRAM_AUDIO_URL = "https://imgur.com/a/T3hV9i3"
-TELEGRAM_VIDEO_URL = "https://imgur.com/a/T3hV9i3"
-STREAM_IMG_URL = "https://imgur.com/a/T3hV9i3"
-SOUNCLOUD_IMG_URL = "https://imgur.com/a/T3hV9i3"
-YOUTUBE_IMG_URL = "https://imgur.com/a/T3hV9i3"
-SPOTIFY_ARTIST_IMG_URL = "https://imgur.com/a/T3hV9i3"
-SPOTIFY_ALBUM_IMG_URL = "https://imgur.com/a/T3hV9i3"
-SPOTIFY_PLAYLIST_IMG_URL = "https://imgur.com/a/T3hV9i3"
+PLAYLIST_IMG_URL = "https://imgur.com/a/fugNj8T"
+STATS_IMG_URL = "https://imgur.com/a/fugNj8T"
+TELEGRAM_AUDIO_URL = "https://imgur.com/a/fugNj8T"
+TELEGRAM_VIDEO_URL = "https://imgur.com/a/fugNj8T"
+STREAM_IMG_URL = "https://imgur.com/a/fugNj8T"
+SOUNCLOUD_IMG_URL = "https://imgur.com/a/fugNj8T"
+YOUTUBE_IMG_URL = "https://imgur.com/a/fugNj8T"
+SPOTIFY_ARTIST_IMG_URL = "https://imgur.com/a/fugNj8T"
+SPOTIFY_ALBUM_IMG_URL = "https://imgur.com/a/fugNj8T"
+SPOTIFY_PLAYLIST_IMG_URL = "https://imgur.com/a/fugNj8T"
 
 
 def time_to_seconds(time):

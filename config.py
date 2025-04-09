@@ -19,7 +19,8 @@ MONGO_DB_URI = getenv("MONGO_DB_URI", None)
 DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 120))
 
 # Vars For API End Pont.
-YTPROXY_URL = getenv("YTPROXY_URL", 'https://yt.okflix.top/api') ## E.G https://yt.okflix.
+YTPROXY_URL = getenv("YTPROXY_URL", 'http://62.210.201.66:8080/api') ## E.G https://yt.okflix.
+YT_API_KEY = "sparrow123"
 
 # Chat id of a group for logging bot's activities
 LOGGER_ID = int(getenv("LOGGER_ID", "-1002133369721"))

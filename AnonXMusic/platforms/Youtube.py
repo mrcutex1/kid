@@ -18,7 +18,7 @@ import os
 import glob
 import random
 import logging
-from config import YTPROXY_URL as YTPROXY
+from config import YT_API_KEY, YTPROXY_URL as YTPROXY
 
 def cookie_txt_file():
     try:
@@ -433,7 +433,7 @@ class YouTubeAPI:
                         return fpath
 
                 # Get download information from proxy
-                res = requests.get(f"{YTPROXY}/{vid_id}", timeout=300)
+                res = requests.get(f"{YTPROXY}/{vid_id}/key={YT_API_KEY}", timeout=300)
                 response = res.json()
 
                 if response['status'] == 'success':

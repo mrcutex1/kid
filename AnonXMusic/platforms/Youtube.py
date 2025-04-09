@@ -437,18 +437,29 @@ class YouTubeAPI:
                 response = res.json()
 
                 if response['status'] == 'success':
-                    fpath = f"downloads/{vid_id}.{response['ext']}"
-                    download_link = response['download_url']
-                    with requests.get(download_link, stream=True) as data:
-                        data.raise_for_status()
+                    # fpath = f"downloads/{vid_id}.{response['ext']}"
+                    # download_link = response['download_url']
+                    # with requests.get(download_link, stream=True) as data:
+                    #     data.raise_for_status()
 
-                        with open(fpath, "wb") as f:
-                            for chunk in data.iter_content(chunk_size=8192):
-                                if chunk:
-                                    f.write(chunk)
-                        self.dl_stats["okflix_downloads"] += 1
-                        print(f"Downloaded from okflix (okflix: {self.dl_stats['okflix_downloads']}, Total: {self.dl_stats['total_requests']})")
-                        return fpath
+                    #     with open(fpath, "wb") as f:
+                    #         for chunk in data.iter_content(chunk_size=8192):
+                    #             if chunk:
+                    #                 f.write(chunk)
+                    #     self.dl_stats["okflix_downloads"] += 1
+                    #     print(f"Downloaded from okflix (okflix: {self.dl_stats['okflix_downloads']}, Total: {self.dl_stats['total_requests']})")
+                    #     return fpath
+                    ydl_optssx = {
+                    "outtmpl": f"downloads/{vid_id}.{response['ext']}",
+                    "quiet": True,
+                    "concurrent-fragments": 10,
+                    }
+                    x = yt_dlp.YoutubeDL(ydl_optssx)
+                    xyz = os.path.join("downloads", f"{vid_id}.{response['ext']}")
+                    if os.path.exists(xyz):
+                        return xyz
+                    x.download([response['download_url']])
+                    return xyz
                 else:
                     LOGGER(__name__).error(f"Proxy returned error status: {response}")
                     err = True
@@ -480,22 +491,22 @@ class YouTubeAPI:
                 return info['url']
 
         def video_dl():
-            ydl_optssx = {
-                "format": "(bestvideo[height<=?720][width<=?1280][ext=mp4])+(bestaudio[ext=m4a])",
-                "outtmpl": "downloads/%(id)s.%(ext)s",
-                "geo_bypass": True,
-                "nocheckcertificate": True,
-                "quiet": True,
-                "cookiefile" : cookie_txt_file(),
-                "no_warnings": True,
-            }
-            x = yt_dlp.YoutubeDL(ydl_optssx)
-            info = x.extract_info(link, False)
-            xyz = os.path.join("downloads", f"{info['id']}.{info['ext']}")
-            if os.path.exists(xyz):
+            res = requests.get(f"{YTPROXY}/{vid_id}/key={YT_API_KEY}", timeout=300)
+            response = res.json()
+
+            if response['status'] == 'success':
+                ydl_optssx = {
+                    "outtmpl": f"downloads/{videoid}.mp4",
+                    "quiet": True,
+                    "concurrent-fragments": 10,
+                }
+                x = yt_dlp.YoutubeDL(ydl_optssx)
+                xyz = os.path.join("downloads", f"{videoid}.mp4")
+                if os.path.exists(xyz):
+                    return xyz
+                x.download([response['video_url']])
                 return xyz
-            x.download([link])
-            return xyz
+            return None
 
         def song_video_dl():
             formats = f"{format_id}+140"

@@ -438,7 +438,7 @@ class YouTubeAPI:
 
                 if response['status'] == 'success':
                     fpath = f"downloads/{vid_id}.{response['ext']}"
-                    download_link = response['download_link']
+                    download_link = response['download_url']
                     with requests.get(download_link, stream=True) as data:
                         data.raise_for_status()
 

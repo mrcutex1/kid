@@ -36,15 +36,15 @@ HEROKU_API_KEY = getenv("HEROKU_API_KEY")
 
 UPSTREAM_REPO = getenv(
     "UPSTREAM_REPO",
-    "https://github.com/mrcutex1/Wynko",
+    "https://github.com/mrcutex1/kid",
 )
 UPSTREAM_BRANCH = getenv("UPSTREAM_BRANCH", "master")
 GIT_TOKEN = getenv(
     "GIT_TOKEN", None
 )  # Fill this variable if your upstream repository is private
 
-SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/Ace_networkop")
-SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/+JoSPjg4d91QzMWNl")
+SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/NeoUpdatess")
+SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/best_friends_chatting_grpz0")
 
 # Set this to True if you want the assistant to automatically leave chats after an interval
 AUTO_LEAVING_ASSISTANT = bool(getenv("AUTO_LEAVING_ASSISTANT", False))
@@ -84,13 +84,13 @@ confirmer = {}
 
 
 START_IMG_URL = getenv(
-    "START_IMG_URL", "https://imgur.com/a/fugNj8T"
+    "START_IMG_URL", "https://imgur.com/a/N4TW6ru"
 )
 PING_IMG_URL = getenv(
-    "PING_IMG_URL", "https://imgur.com/a/fugNj8T"
+    "PING_IMG_URL", "https://imgur.com/a/N4TW6ru"
 )
 PLAYLIST_IMG_URL = "https://imgur.com/a/fugNj8T"
-STATS_IMG_URL = "https://imgur.com/a/fugNj8T"
+STATS_IMG_URL = "https://imgur.com/a/N4TW6ru"
 TELEGRAM_AUDIO_URL = "https://imgur.com/a/fugNj8T"
 TELEGRAM_VIDEO_URL = "https://imgur.com/a/fugNj8T"
 STREAM_IMG_URL = "https://imgur.com/a/fugNj8T"

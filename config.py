@@ -19,8 +19,10 @@ MONGO_DB_URI = getenv("MONGO_DB_URI", None)
 DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 120))
 
 # Vars For API End Pont.
-YTPROXY_URL = getenv("YTPROXY_URL", 'http://tubed1.okflix.top/') ## E.G https://yt.okflix.
-YT_API_KEY = "freekey15052025"
+#YTPROXY_URL = getenv("YTPROXY_URL", 'http://tubed1.okflix.top/') ## E.G https://yt.okflix.
+#YT_API_KEY = "freekey15052025"
+API_URL = getenv("API_URL", 'https://api.thequickearn.xyz') #youtube song url
+API_KEY = getenv("API_KEY", 30DxNexGenBotsc0db7b) # youtube song api key, get it from https://t.me/RahulTC
 
 # Chat id of a group for logging bot's activities
 LOGGER_ID = int(getenv("LOGGER_ID", "-1002133369721"))
